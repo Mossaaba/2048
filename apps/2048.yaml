@@ -1,25 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: 2048-game
-  name: 2048-game
+  name: jenkins
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: 2048-game
-  strategy: {}
+      app: jenkins
   template:
     metadata:
       labels:
-        app: 2048-game
+        app: jenkins
     spec:
       containers:
-      - image: alexwhen/docker-2048
-        name: 2048-game
+      - name: jenkins
+        image: jenkins/jenkins:lts-jdk11
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        volumeMounts:
+        - name: jenkins-home
+          mountPath: /var/jenkins_home
+      volumes:
+      - name: jenkins-home
+        emptyDir: { }
 
 ---
 apiVersion: v1
@@ -31,6 +34,6 @@ metadata:
 spec:
   ports:
   - name: 2048-game
-    port: 80
+    port: 8080
   selector:
     app: 2048-game  
